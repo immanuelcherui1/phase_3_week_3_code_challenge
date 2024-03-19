@@ -1,14 +1,12 @@
 # lib/restaurant.py
 from __init__ import CURSOR, CONN
-from restaurant import Restaurant
-from review import Review
 
 class Restaurant:
 
     # Dictionary of objects saved to the database.
     all = {}
 
-    def __init__(self, name, location, id=None):
+    def __init__(self, name, price, id=None):
         self.id = id
         self.name = name
         self.price = price
@@ -85,6 +83,36 @@ class Restaurant:
         restaurant.save()
         return restaurant
 
+    @classmethod
+    def find_by_id(cls, id):
+        """Return a Restaurant object corresponding to the table row matching the specified primary key"""
+        sql = """
+            SELECT *
+            FROM restaurants
+            WHERE id = ?
+        """
+
+        row = CURSOR.execute(sql, (id,)).fetchone()
+        return cls.instance_from_db(row) if row else None
+
+
+    @classmethod
+    def instance_from_db(cls, row):
+        """Return a Restaurant object having the attribute values from the table row."""
+
+        # Check the dictionary for an existing instance using the row's primary key
+        restaurant = cls.all.get(row[0])
+        if restaurant:
+            # ensure attributes match row values in case local instance was modified
+            restaurant.name = row[1]
+            restaurant.price = row[2]
+        else:
+            # not in dictionary, create new instance and add to dictionary
+            restaurant = cls(row[1], row[2])
+            restaurant.id = row[0]
+            cls.all[restaurant.id] = restaurant
+        return restaurant
+    
     # def update(self):
     #     """Update the table row corresponding to the current Department instance."""
     #     sql = """
@@ -113,22 +141,7 @@ class Restaurant:
     #     # Set the id to None
     #     self.id = None
 
-    # @classmethod
-    # def instance_from_db(cls, row):
-    #     """Return a Department object having the attribute values from the table row."""
-
-    #     # Check the dictionary for an existing instance using the row's primary key
-    #     department = cls.all.get(row[0])
-    #     if department:
-    #         # ensure attributes match row values in case local instance was modified
-    #         department.name = row[1]
-    #         department.location = row[2]
-    #     else:
-    #         # not in dictionary, create new instance and add to dictionary
-    #         department = cls(row[1], row[2])
-    #         department.id = row[0]
-    #         cls.all[department.id] = department
-    #     return department
+    
 
     # @classmethod
     # def get_all(cls):
@@ -142,18 +155,7 @@ class Restaurant:
 
     #     return [cls.instance_from_db(row) for row in rows]
 
-    # @classmethod
-    # def find_by_id(cls, id):
-    #     """Return a Department object corresponding to the table row matching the specified primary key"""
-    #     sql = """
-    #         SELECT *
-    #         FROM departments
-    #         WHERE id = ?
-    #     """
-
-    #     row = CURSOR.execute(sql, (id,)).fetchone()
-    #     return cls.instance_from_db(row) if row else None
-
+    
     # @classmethod
     # def find_by_name(cls, name):
     #     """Return a Department object corresponding to first table row matching specified name"""

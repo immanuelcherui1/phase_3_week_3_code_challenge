@@ -1,7 +1,7 @@
 # lib/customer.py
 from __init__ import CURSOR, CONN
 from restaurant import Restaurant
-from review import Review
+
 
 class Customer:
 
@@ -103,6 +103,39 @@ class Customer:
         customer.save()
         return customer
 
+    @classmethod
+    def find_by_id(cls, id):
+        """Return Customer object corresponding to the table row matching the specified primary key"""
+        sql = """
+            SELECT *
+            FROM customers
+            WHERE id = ?
+        """
+
+        row = CURSOR.execute(sql, (id,)).fetchone()
+        return cls.instance_from_db(row) if row else None
+
+    
+    @classmethod
+    def instance_from_db(cls, row):
+        """Return an Customers object having the attribute values from the table row."""
+
+        # Check the dictionary for  existing instance using the row's primary key
+        customer = cls.all.get(row[0])
+        if customer:
+            # ensure attributes match row values in case local instance was modified
+            customer.first_name = row[1]
+            customer.last_name = row[2]
+            customer.restaurant_id = row[3]
+        else:
+            # not in dictionary, create new instance and add to dictionary
+            customer = cls(row[1], row[2], row[3])
+            customer.id = row[0]
+            cls.all[customer.id] = customer
+        return customer
+
+    
+    
     # def update(self):
     #     """Update the table row corresponding to the current Employee instance."""
     #     sql = """
@@ -134,24 +167,7 @@ class Customer:
 
     
 
-    # @classmethod
-    # def instance_from_db(cls, row):
-    #     """Return an Employee object having the attribute values from the table row."""
-
-    #     # Check the dictionary for  existing instance using the row's primary key
-    #     employee = cls.all.get(row[0])
-    #     if employee:
-    #         # ensure attributes match row values in case local instance was modified
-    #         employee.name = row[1]
-    #         employee.job_title = row[2]
-    #         employee.department_id = row[3]
-    #     else:
-    #         # not in dictionary, create new instance and add to dictionary
-    #         employee = cls(row[1], row[2], row[3])
-    #         employee.id = row[0]
-    #         cls.all[employee.id] = employee
-    #     return employee
-
+   
     # @classmethod
     # def get_all(cls):
     #     """Return a list containing one Employee object per table row"""
@@ -164,18 +180,7 @@ class Customer:
 
     #     return [cls.instance_from_db(row) for row in rows]
 
-    # @classmethod
-    # def find_by_id(cls, id):
-    #     """Return Employee object corresponding to the table row matching the specified primary key"""
-    #     sql = """
-    #         SELECT *
-    #         FROM employees
-    #         WHERE id = ?
-    #     """
-
-    #     row = CURSOR.execute(sql, (id,)).fetchone()
-    #     return cls.instance_from_db(row) if row else None
-
+    
     # @classmethod
     # def find_by_name(cls, name):
     #     """Return Employee object corresponding to first table row matching specified name"""

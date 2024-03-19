@@ -66,15 +66,17 @@ class Review:
         """ Create a new table to persist the attributes of Review instances """
         sql = """
             CREATE TABLE IF NOT EXISTS reviews (
-            id INTEGER PRIMARY KEY,
-            star_rating INTEGER,
-            restaurant_id INTEGER,
-            customer_id INTEGER,
-            FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id),
-            FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
+                id INTEGER PRIMARY KEY,
+                star_rating INTEGER,
+                restaurant_id INTEGER,
+                customer_id INTEGER,
+                FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id),
+                FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
+            )
         """
         CURSOR.execute(sql)
         CONN.commit()
+
 
     @classmethod
     def drop_table(cls):
