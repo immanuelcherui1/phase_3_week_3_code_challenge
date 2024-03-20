@@ -2,30 +2,40 @@
 
 from __init__ import CONN, CURSOR
 import random
-from department import Department
-from employee import Employee
-from review import Review
+from restaurant import Restaurant
+from customer import Customer
+from review import Review 
 import ipdb
 
 
 def reset_database():
+    # Drop existing tables if they exist
+    Restaurant.drop_table()
+    Customer.drop_table()
     Review.drop_table()
-    Employee.drop_table()
-    Department.drop_table()
-    Department.create_table()
-    Employee.create_table()
+
+    # Create new tables
+    Restaurant.create_table()
+    Customer.create_table()
     Review.create_table()
 
     # Create seed data
-    payroll = Department.create("Payroll", "Building A, 5th Floor")
-    human_resources = Department.create(
-        "Human Resources", "Building C, East Wing")
-    employee1 = Employee.create("Lee", "Manager", payroll.id)
-    employee2 = Employee.create("Sasha", "Manager", human_resources.id)
-    Review.create(2023, "Efficient worker", employee1.id)
-    Review.create(2022, "Good work ethic", employee1.id)
-    Review.create(2023, "Excellent communication skills", employee2.id)
-
+    sarova = Restaurant.create("Sarova", 20000)
+    panari = Restaurant.create("Panari", 25000)
+    
+    amir = Customer.create("Amir", "Acco", sarova.id)
+    bola = Customer.create("Bola", "Mnage", panari.id)
+    charlie = Customer.create("Charlie", "Man", panari.id)
+    dani = Customer.create("Dani", "Ben", sarova.id)
+    hao = Customer.create("Hao", "Coord", panari.id)
+    
+    Review.create(5, sarova.id, amir.id)
+    Review.create(1, panari.id, dani.id)
+    Review.create(4, panari.id, hao.id)
+    Review.create(5, sarova.id, charlie.id)
+    Review.create(2, sarova.id, dani.id)
+    Review.create(3, panari.id, amir.id)
+    Review.create(4, sarova.id, hao.id)
 
 reset_database()
 ipdb.set_trace()

@@ -113,6 +113,35 @@ class Review:
         return review
 
     
+    def review_customer(self):
+        """Return the Customer instance associated with this review."""
+        # Fetch the Customer instance from the database using the customer_id
+        sql = "SELECT * FROM customers WHERE id = ?"
+        CURSOR.execute(sql, (self.customer_id,))
+        customer_data = CURSOR.fetchone()
+
+        # Create and return the Customer instance
+        if customer_data:
+            return Customer(*customer_data)
+        else:
+            return None
+
+    def review_restaurant(self):
+        """Return the Restaurant instance associated with this review."""
+        # Fetch the Restaurant instance from the database using the restaurant_id
+        sql = "SELECT * FROM restaurants WHERE id = ?"
+        CURSOR.execute(sql, (self.restaurant_id,))
+        restaurant_data = CURSOR.fetchone()
+
+        # Create and return the Restaurant instance
+        if restaurant_data:
+            return Restaurant(*restaurant_data)
+        else:
+            return None
+
+    
+    
+    
     # @classmethod
     # def instance_from_db(cls, row):
     #     """Return an Review instance having the attribute values from the table row."""

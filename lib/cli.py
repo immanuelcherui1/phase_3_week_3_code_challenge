@@ -1,5 +1,6 @@
 from helpers import (
     exit_program,
+    review_customer,
     # list_departments,
     # find_department_by_name,
     # find_department_by_id,
@@ -22,8 +23,8 @@ def main():
         choice = input("> ")
         if choice == "0":
             exit_program()
-        # elif choice == "1":
-        #     list_departments()
+        elif choice == "1":
+            review_customer()
         # elif choice == "2":
         #     find_department_by_name()
         # elif choice == "3":
@@ -55,7 +56,7 @@ def main():
 def menu():
     print("Please select an option:")
     print("0. Exit the program")
-    # print("1. List all departments")
+    print("1. Reviews by Customer")
     # print("2. Find department by name")
     # print("3. Find department by id")
     # print("4: Create department")

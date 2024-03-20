@@ -113,6 +113,36 @@ class Restaurant:
             cls.all[restaurant.id] = restaurant
         return restaurant
     
+    
+    def restaurant_reviews(self):
+        """Return a collection of all the reviews for the Restaurant."""
+        # Fetch reviews associated with this restaurant from the database
+        sql = "SELECT * FROM reviews WHERE restaurant_id = ?"
+        CURSOR.execute(sql, (self.id,))
+        reviews_data = CURSOR.fetchall()
+
+        # Create Review instances for each review data and return as a collection
+        return [Review(*review_data) for review_data in reviews_data]
+
+    def restaurant_customers(self):
+        """Return a collection of all the customers who reviewed the Restaurant."""
+        # Fetch unique customer IDs who reviewed this restaurant from the reviews table
+        sql = "SELECT DISTINCT customer_id FROM reviews WHERE restaurant_id = ?"
+        CURSOR.execute(sql, (self.id,))
+        customer_ids_data = CURSOR.fetchall()
+
+        # Fetch Customer instances based on the customer IDs
+        customers = []
+        for customer_id_data in customer_ids_data:
+            customer_id = customer_id_data[0]
+            sql = "SELECT * FROM customers WHERE id IN (SELECT DISTINCT customer_id FROM reviews WHERE restaurant_id = ?)"
+            CURSOR.execute(sql, (self.id,))
+            customer_data = CURSOR.fetchone()
+            if customer_data:
+                customers.append(Customer(*customer_data))
+
+        return customers
+    
     # def update(self):
     #     """Update the table row corresponding to the current Department instance."""
     #     sql = """
